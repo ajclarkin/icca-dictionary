@@ -1,0 +1,18 @@
+version: "3"
+services:
+  web:
+    image: flaskapp
+    container_name: icca-dictionary
+    ports:
+      - "8010:80"
+    volumes:
+      - ./flask:/flask
+      # - /home/andrew/containers/streamlit_rota/consultant-rota/data:/data
+    networks:
+      - nginx-proxy-manager_default
+    restart: unless-stopped
+
+networks:
+  nginx-proxy-manager_default:
+    external: true
+    name: nginx-proxy-manager_default

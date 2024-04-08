@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document Fields</title>
+  <link rel="stylesheet" type="text/css" href="static/styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Function to fetch data from the backend API and update the table
+      function fetchData(filters) {
+        $.getJSON('/api/data', filters, function(data) {
+          var tableBody = $('#dataTable tbody');
+          tableBody.empty();
+          data.forEach(function(row) {
+            var tr = $('<tr tabindex="0">');
+            tr.append($('<td>').text(row.documentid));
+            tr.append($('<td>').text(row.documentName));
+            tr.append($('<td class="fieldid">').text(row.fieldid));
+            tr.append($('<td>').text(row.fieldName));
+            tableBody.append(tr);
+          });
+        });
+      }
+
+      // Event handler for filter inputs
+      $('#filterForm').on('input', 'input', function() {
+        var filters = {};
+        $('#filterForm input').each(function() {
+          var field = $(this).attr('name');
+          var value = $(this).val();
+          if (value) {
+            filters[field] = value;
+          }
+        });
+        fetchData(filters);
+      });
+
+      // Event handler for copying fieldid to clipboard
+      $('#dataTable').on('click', '.fieldid', function() {
+        var fieldid = $(this).text();
+        navigator.clipboard.writeText(fieldid);
+        alert('Fieldid copied to clipboard: ' + fieldid);
+      });
+
+      // Event handler for keyboard navigation
+      $('#dataTable').on('keydown', 'tr', function(e) {
+        if (e.keyCode === 13) { // Enter key
+          $(this).find('.fieldid').click();
+        } else if (e.keyCode === 38) { // Up arrow
+          var prevRow = $(this).prev();
+          if (prevRow.length) {
+            prevRow.focus();
+          }
+        } else if (e.keyCode === 40) { // Down arrow
+          var nextRow = $(this).next();
+          if (nextRow.length) {
+            nextRow.focus();
+          }
+        }
+      });
+
+      // Event handler for highlighting selected row
+      $('#dataTable').on('focus', 'tr', function() {
+        $(this).addClass('selected');
+      });
+
+      $('#dataTable').on('blur', 'tr', function() {
+        $(this).removeClass('selected');
+      });
+
+      // Initial data fetch
+      fetchData({});
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Document Fields</h1>
+  <form id="filterForm">
+    <label for="documentid">Document ID:</label>
+    <input type="text" id="documentid" name="documentid">
+    <label for="documentName">Document Name:</label>
+    <input type="text" id="documentName" name="documentName">
+    <label for="fieldName">Field Name:</label>
+    <input type="text" id="fieldName" name="fieldName">
+  </form>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Document ID</th>
+        <th>Document Name</th>
+        <th>Field ID</th>
+        <th>Field Name</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</body>
+</html>
+

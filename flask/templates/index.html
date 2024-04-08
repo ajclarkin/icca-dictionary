@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Document Fields</title>
+  <link rel="stylesheet" type="text/css" href="static/styles.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Function to fetch data from the backend API and update the table
+      function fetchData(filters) {
+        $.getJSON('/api/data', filters, function(data) {
+          var tableBody = $('#dataTable tbody');
+          tableBody.empty();
+          data.forEach(function(row) {
+            var tr = $('<tr tabindex="0">');
+            tr.append($('<td>').text(row.documentLabel));
+            tr.append($('<td>').text(row.intLabel));
+            tr.append($('<td class="propName">').text(row.attributeDictionaryPropName));
+            tr.append($('<td>').text(row.table));
+            tableBody.append(tr);
+          });
+        });
+      }
+
+      // Event handler for filter inputs
+      $('#filterForm').on('input', 'input', function() {
+        var filters = {};
+        $('#filterForm input').each(function() {
+          var field = $(this).attr('name');
+          var value = $(this).val();
+          if (value) {
+            filters[field] = value;
+          }
+        });
+        fetchData(filters);
+      });
+
+      // Event handler for copying attributeDictionaryPropName to clipboard
+      $('#dataTable').on('click', '.propName', function() {
+        var propName = $(this).text();
+        navigator.clipboard.writeText(propName);
+        alert('Property Name copied to clipboard: ' + propName);
+      });
+
+      // Event handler for keyboard navigation
+      $('#dataTable').on('keydown', 'tr', function(e) {
+        if (e.keyCode === 13) { // Enter key
+          $(this).find('.propName').click();
+        } else if (e.keyCode === 38) { // Up arrow
+          var prevRow = $(this).prev();
+          if (prevRow.length) {
+            prevRow.focus();
+          }
+        } else if (e.keyCode === 40) { // Down arrow
+          var nextRow = $(this).next();
+          if (nextRow.length) {
+            nextRow.focus();
+          }
+        }
+      });
+
+      // Event handler for highlighting selected row
+      $('#dataTable').on('focus', 'tr', function() {
+        $(this).addClass('selected');
+      });
+
+      $('#dataTable').on('blur', 'tr', function() {
+        $(this).removeClass('selected');
+      });
+
+      // Event handler for keyboard shortcuts to select filter boxes
+      $(document).on('keydown', function(e) {
+        if (e.altKey && e.keyCode === 68) { // Alt + D
+          $('#document').focus();
+        } else if (e.altKey && e.keyCode === 73) { // Alt + I
+          $('#intervention').focus();
+        } else if (e.altKey && e.keyCode === 80) { // Alt + P
+          $('#propName').focus();
+        } else if (e.altKey && e.keyCode === 84) { // Alt + T
+          $('#table').focus();
+        }
+      });
+
+      // Initial data fetch
+      fetchData({});
+    });
+  </script>
+</head>
+<body>
+  <h1>Document Fields</h1>
+  <form id="filterForm">
+    <label for="document">Document:</label>
+    <input type="text" id="document" name="documentLabel">
+    <label for="intervention">Intervention:</label>
+    <input type="text" id="intervention" name="intLabel">
+    <label for="propName">Prop Name:</label>
+    <input type="text" id="propName" name="attributeDictionaryPropName">
+    <label for="table">Table:</label>
+    <input type="text" id="table" name="table">
+  </form>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Document Label</th>
+        <th>Int Label</th>
+        <th>Attribute Dictionary Prop Name</th>
+        <th>Table</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</body>
+</html>
+
