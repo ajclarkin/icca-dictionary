@@ -1,17 +1,22 @@
 import csv
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+db = SQLAlchemy(app)
 
-def load_data_from_csv(file_path):
-    data = []
-    with open(file_path, 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            data.append(row)
-    return data
+
+class Intervention(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    documentLabel = db.Column(db.String(100))
+    intLabel = db.Column(db.String(100))
+    attributeDictionaryPropName = db.Column(db.String(100))
+    table = db.Column(db.String(100))
+
 
 
 @app.route('/')
@@ -27,19 +32,28 @@ def get_data():
     prop_name = request.args.get('attributeDictionaryPropName')
     table = request.args.get('table')
 
-    # Load data from CSV file
-    data = load_data_from_csv('data.csv')
 
-    # Filter data based on query parameters
-    filtered_data = data
+    # Query the database based on filter parameters
+    interventions = Intervention.query
     if document_label:
-        filtered_data = [row for row in filtered_data if document_label.lower() in row['documentLabel'].lower()]
+        interventions = interventions.filter(Intervention.documentLabel.ilike(f'%{document_label}%'))
     if int_label:
-        filtered_data = [row for row in filtered_data if int_label.lower() in row['intLabel'].lower()]
+        interventions = interventions.filter(Intervention.intLabel.ilike(f'%{int_label}%'))
     if prop_name:
-        filtered_data = [row for row in filtered_data if prop_name.lower() in row['attributeDictionaryPropName'].lower()]
+        interventions = interventions.filter(Intervention.attributeDictionaryPropName.ilike(f'%{prop_name}%'))
     if table:
-        filtered_data = [row for row in filtered_data if table.lower() in row['table'].lower()]
+        interventions = interventions.filter(Intervention.table.ilike(f'%{table}%'))
+
+    # Convert the results to a list of dictionaries
+    data = [
+        {
+            'documentLabel': intervention.documentLabel,
+            'intLabel': intervention.intLabel,
+            'attributeDictionaryPropName': intervention.attributeDictionaryPropName,
+            'table': intervention.table
+        }
+        for intervention in interventions
+    ]
 
     return jsonify(filtered_data)
 

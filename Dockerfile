@@ -4,6 +4,8 @@ RUN pip3 install flask
 
 RUN pip3 install flask_cors
 
+RUN pip3 install flask_sqlalchemy
+
 RUN pip3 install gunicorn
 
 WORKDIR /flask
