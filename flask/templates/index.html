@@ -15,6 +15,7 @@
             var tr = $('<tr tabindex="0">');
             tr.append($('<td>').text(row.documentLabel));
             tr.append($('<td>').text(row.intLabel));
+            tr.append($('<td>').text(row.attLabel));
             tr.append($('<td class="propName">').text(row.attributeDictionaryPropName));
             tr.append($('<td>').text(row.table));
             tableBody.append(tr);
@@ -74,6 +75,8 @@
           $('#document').focus();
         } else if (e.altKey && e.keyCode === 73) { // Alt + I
           $('#intervention').focus();
+        } else if (e.altKey && e.keyCode === 65) { // Alt + A
+          $('#attribute').focus();
         } else if (e.altKey && e.keyCode === 80) { // Alt + P
           $('#propName').focus();
         } else if (e.altKey && e.keyCode === 84) { // Alt + T
@@ -93,6 +96,8 @@
     <input type="text" id="document" name="documentLabel">
     <label for="intervention">Intervention:</label>
     <input type="text" id="intervention" name="intLabel">
+    <label for="attribute">Attribute:</label>
+    <input type="text" id="attribute" name="attLabel">
     <label for="propName">Prop Name:</label>
     <input type="text" id="propName" name="attributeDictionaryPropName">
     <label for="table">Table:</label>
@@ -103,6 +108,7 @@
       <tr>
         <th>Document Label</th>
         <th>Int Label</th>
+        <th>Att Label</th>
         <th>Attribute Dictionary Prop Name</th>
         <th>Table</th>
       </tr>
