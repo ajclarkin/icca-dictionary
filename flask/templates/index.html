@@ -16,8 +16,8 @@
             tr.append($('<td>').text(row.documentLabel));
             tr.append($('<td>').text(row.intLabel));
             tr.append($('<td>').text(row.attLabel));
-            tr.append($('<td class="propName">').text(row.attributeDictionaryPropName));
-            tr.append($('<td>').text(row.table));
+            tr.append($('<td class="propName">').text(row.aDPN));
+            tr.append($('<td>').text(row.tablename));
             tableBody.append(tr);
           });
         });
@@ -99,9 +99,9 @@
     <label for="attribute">Attribute:</label>
     <input type="text" id="attribute" name="attLabel">
     <label for="propName">Prop Name:</label>
-    <input type="text" id="propName" name="attributeDictionaryPropName">
+    <input type="text" id="propName" name="aDPN">
     <label for="table">Table:</label>
-    <input type="text" id="table" name="table">
+    <input type="text" id="tablename" name="tablename">
   </form>
   <table id="dataTable">
     <thead>
@@ -109,8 +109,8 @@
         <th>Document Label</th>
         <th>Int Label</th>
         <th>Att Label</th>
-        <th>Attribute Dictionary Prop Name</th>
-        <th>Table</th>
+        <th>aDPN</th>
+        <th>Table Name</th>
       </tr>
     </thead>
     <tbody>

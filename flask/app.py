@@ -4,7 +4,10 @@ from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
 
 app = Flask(__name__)
+
 CORS(app)  # Enable CORS for all routes
+
+
 
 # Added the UTF encoding because there was a hidden character preventing the first column from mapping
 def load_data_from_csv(file_path):
@@ -16,9 +19,12 @@ def load_data_from_csv(file_path):
     return data
 
 
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 
 @app.route('/api/data')
@@ -27,8 +33,8 @@ def get_data():
     document_label = request.args.get('documentLabel')
     int_label = request.args.get('intLabel')
     att_label = request.args.get('attLabel')
-    prop_name = request.args.get('attributeDictionaryPropName')
-    table = request.args.get('table')
+    prop_name = request.args.get('aDPN')
+    tablename = request.args.get('tablename')
 
     # Load data from CSV file
     data = load_data_from_csv('data.csv')
@@ -42,13 +48,12 @@ def get_data():
     if att_label:
         filtered_data = [row for row in filtered_data if att_label.lower() in row['attLabel'].lower()]
     if prop_name:
-        filtered_data = [row for row in filtered_data if prop_name.lower() in row['attributeDictionaryPropName'].lower()]
-    if table:
-        filtered_data = [row for row in filtered_data if table.lower() in row['table'].lower()]
+        filtered_data = [row for row in filtered_data if prop_name.lower() in row['aDPN'].lower()]
+    if tablename:
+        filtered_data = [row for row in filtered_data if tablename.lower() in row['tablename'].lower()]
 
     filtered_data = sorted(filtered_data, key=lambda x: x['documentLabel'])
     return jsonify(filtered_data)
 
 if __name__ == '__main__':
     app.run()
-
