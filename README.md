@@ -25,8 +25,9 @@ for pasting into SQL.
 Requires a correctly formatted CSV with columns:
  - documentLabel
  - intLabel (take care to ensure wrapped in quotes as may contain commas)
- - attributeDictionaryPropName
- - table
+ - attLabel (wrapped)
+ - aDPN -> contains attributeDictionaryPropName
+ - tablename -> although I've used the DAR patient tables I list the main dbo Pt table here
 
 Philips don't provide a good means of building this so I take a pragmatic approach. I have code to 
 extract unique entries from the database and add to the data source.
